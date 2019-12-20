@@ -1,10 +1,15 @@
 #!/bin/sh
 
+REPO_NAME=$1
+git clone --bare "https://github.com/Bmillidgework/${REPO_NAME}"
+cd $REPO_NAME
+
+
 git filter-branch --env-filter '
 
-OLD_EMAIL="your-old-email@example.com"
-CORRECT_NAME="Your Correct Name"
-CORRECT_EMAIL="your-correct-email@example.com"
+OLD_EMAIL="<old-email>"
+CORRECT_NAME="<correct-name"
+CORRECT_EMAIL="<correct-email>"
 
 if [ "$GIT_COMMITTER_EMAIL" = "$OLD_EMAIL" ]
 then
@@ -17,3 +22,7 @@ then
     export GIT_AUTHOR_EMAIL="$CORRECT_EMAIL"
 fi
 ' --tag-name-filter cat -- --branches --tags
+
+git push --force --tags origin 'refs/heads/*'
+cd ..
+rm -rf $REPO_NAME
